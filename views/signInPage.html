@@ -1,0 +1,32 @@
+{{> header }}
+<body>
+    <div class="container">
+        <div id="login-row" class="row justify-content-center align-items-center">
+          <div id="login-column" class="col-md-6">
+            <div id="login-box" class="col-md-12"> <br>
+      
+              <h1 class="text-center"> Join your Culinary Buddies </h1> <br>
+      
+              <form id="login-form" class="form" action="/signInPage" method="POST">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Email address</label>
+                  <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    required>
+                </div>
+      
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                  <input type="password" name="password" class="form-control" id="exampleInputPassword1" required>
+      
+                </div>
+                <div class="info">
+                  <p style="color:red;"> {{messages.info}} </p>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+      
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
