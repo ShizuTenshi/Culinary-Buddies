@@ -1,1 +1,46 @@
 {{> header }}
+<body>
+    <div class="container">
+        <div id="signup-row" class="row justify-content-center align-items-center">
+            <div id="signup-column" class="col-md-6">
+                <div id="signup-box" class="col-md-12">
+                    <br>
+                    <h1 class="text-center">Become a Culinary Buddy</h1>
+                    <br>
+                    <form id="signup-form" class="form" action="/signUpPage" method="POST">
+                        <div class="form-group">
+                            <label for="inputName">Name</label>
+                            <input type="text" name="name" class="form-control" id="inputName" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail">Email address</label>
+                            <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Enter a password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputConfirmPassword">Confirm Password</label>
+                            <input type="password" name="confirmPassword" class="form-control" id="inputConfirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputDietary">Dietary Needs</label>
+                            <select class="form-control" id="inputDietary" name="dietary">
+                                <option value="none">None</option>
+                                <option value="vegetarian">Vegetarian</option>
+                                <option value="vegan">Vegan</option>
+                                <option value="gluten-free">Gluten-Free</option>
+                            </select>
+                        </div>
+                        <div class="info">
+                            <p style="color:red;">{{messages.regError}}</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
