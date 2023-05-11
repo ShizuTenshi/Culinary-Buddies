@@ -13,9 +13,13 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <div class="collapse navbar-collapse justify-content-end">
+        {{^isConnected}}
         <a href="/signInPage" class="btn btn-primary mr-1">Sign In</a> &nbsp;
-        <a href="/signUpPage" class="btn btn-primary mr-2">Sign Up</a> &nbsp;
+        <a href="/signUpPage" class="btn btn-primary mr-2">Sign Up</a> &nbsp; 
+        {{/isConnected}}
+        {{#isConnected}}
         <a href="/signOut" class="btn btn-primary mr-2">Sign Out</a>
+        {{/isConnected}}
       </div>
     </div>
   </nav>
