@@ -15,39 +15,101 @@ app.set('views', './views');
 app.use(flash());
 
 app.use(cookieSession({
-    secret: 'mot-de-passe-du-cookie'
-  }));
+  secret: 'mot-de-passe-du-cookie'
+}));
 
 let userModel = require('./models/userModel');
 
 // ----------------------------------------------------------------------------------
-  app.get('/', function (req, res) {
-    res.render('index');
-  })
+app.get('/', function (req, res) {
+  res.render('index');
+})
 
-  app.get('/signInPage', function (req, res) {
-    res.render('signInPage');
-  })
+app.get('/signInPage', function (req, res) {
+  res.render('signInPage');
+})
 
-  app.get('/signOut', function (req, res) {
-    req.session = null;
-    res.redirect('/');
-  })
+app.get('/signUpPage', function (req, res) {
+  res.render('signUpPage');
+})
+
+app.get('/signOut', function (req, res) {
+  req.session = null;
+  res.redirect('/');
+})
 
 
-  app.post('/signInPage', function (req, res) {
-    let email = req.body.email;
-    let password = req.body.password;
-    let verifyId = userModel.loginBuddy(email,password);
-    if (verifyId == -1) {
-      req.flash('logError', 'email or password incorrect');
-      res.redirect('/signInPage');
-    }
-    else {
-        req.session.sessionId = verifyId;
-        res.redirect('/');
-    }
-  })
+app.post('/signInPage', function (req, res) {
+  let email = req.body.email;
+  let password = req.body.password;
+  let verifyId = userModel.loginBuddy(email, password);
+  if (verifyId === -1) {
+    req.flash('logError', 'email or password incorrect');
+    res.redirect('/signInPage');
+  }
+
+  req.session.sessionId = verifyId;
+  res.redirect('/homePage');
+})
+
+app.post('/signUpPage', function (req, res) {
+  let name = req.body.name;
+  let email = req.body.email;
+  let password = req.body.password;
+  let confirmPassword = req.body.confirmPassword;
+
+  if (password !== confirmPassword) {
+    req.flash('regError', "passwords don't match");
+    res.redirect('/signUpPage');
+  }
+
+  else if (userModel.nameExist(name) !== -1) {
+    req.flash('regError', "name is already taken");
+    res.redirect('/signUpPage');
+  }
+
+  else if (userModel.emailExist(email) !== -1) {
+    req.flash('regError', "another account used this email");
+    res.redirect('/signUpPage');
+  }
+  else {
+    userModel.insertUser(name, email, password);
+    req.flash('reg', "account was successfully created!");
+    res.redirect('/signInPage');
+
+
+  }
+
+})
+
+
+
+// User needs to be connected for everything beyond this point 
+app.use(isAuthenticated);
+
+app.get('/homePage', function (req, res) {
+  res.render('homePage');
+})
+
+
+
+
+
+/*
+* This is a middleware function that tests if the user is connected when he wants to
+* access pages that require an authentification.
+*/
+function isAuthenticated(req, res, next) {
+  // checks if a session is open
+  if (req.session.sessionId !== undefined) {
+    res.locals.isConnected = true;
+    return next();
+  }
+
+  res.status(401).send("Please sign in before you proceed");
+}
+
+
 
 
 app.listen(5000, () => console.log('listening on http://localhost:5000'));
