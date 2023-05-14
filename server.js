@@ -39,6 +39,7 @@ app.get('/signOut', function (req, res) {
 })
 
 
+
 app.post('/signInPage', function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
@@ -90,6 +91,19 @@ app.use(isAuthenticated);
 app.get('/homePage', function (req, res) {
   res.render('homePage');
 })
+
+app.get('/profilePage', function (req, res) {
+  res.render('profilePage');
+})
+
+app.get('/editAccount', function (req, res) {
+  res.render('editAccount');
+})
+
+app.get('/myProfile', function (req, res) {
+  res.redirect('/profilePage');
+})
+
 
 
 
