@@ -53,8 +53,9 @@ app.post('/signInPage', function (req, res) {
   res.redirect('/homePage');
 })
 
+
 app.post('/signUpPage', function (req, res) {
-  let name = req.body.name;
+  let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
   let confirmPassword = req.body.confirmPassword;
@@ -64,7 +65,7 @@ app.post('/signUpPage', function (req, res) {
     res.redirect('/signUpPage');
   }
 
-  else if (userModel.nameExist(name) !== -1) {
+  else if (userModel.nameExist(username) !== -1) {
     req.flash('regError', "name is already taken");
     res.redirect('/signUpPage');
   }
@@ -74,7 +75,7 @@ app.post('/signUpPage', function (req, res) {
     res.redirect('/signUpPage');
   }
   else {
-    userModel.insertUser(name, email, password);
+    userModel.insertUser(username, email, password);
     req.flash('reg', "account was successfully created!");
     res.redirect('/signInPage');
 
@@ -104,9 +105,32 @@ app.get('/myProfile', function (req, res) {
   res.redirect('/profilePage');
 })
 
+app.post('/editAccount', function (req, res) {
+  let userId = req.session.sessionId; // Get the user ID from the session
 
+  // Retrieve the form data from the request body
+  let username = req.body.username;
+  let email = req.body.email;
+  let password = req.body.password;
+  let dietaryPreferences = req.body.dietary;
+  let otherDietary = req.body.other_dietary;
+  let healthConcerns = req.body.health_concerns;
+  let otherHealthConcerns = req.body.other_health_concerns;
 
+  // Update the user's account information in the userModel
+  userModel.updateUser(userId, {
+    username: username,
+    email: email,
+    password: password,
+    dietaryPreferences: dietaryPreferences,
+    otherDietary: otherDietary,
+    healthConcerns: healthConcerns,
+    otherHealthConcerns: otherHealthConcerns
+  });
 
+  req.flash('success', 'Account information updated successfully');
+  res.redirect('/profilePage');
+})
 
 
 /*
