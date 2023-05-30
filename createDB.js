@@ -11,44 +11,46 @@ const Sqlite = require('better-sqlite3');
 createTables(); **/
 
 // Open a database connection
-let db = new sqlite3.Database('example.db');
+let db = new Sqlite('db.sqlite');
 
 // Create the Account table
-db.run(`
-  CREATE TABLE Account (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Account (
     accountId INTEGER PRIMARY KEY,
     email TEXT,
     username TEXT,
     password TEXT,
     authPost INTEGER,
+    healthConcernId INTEGER,
+    dietaryPreferenceId INTEGER,
     FOREIGN KEY (healthConcernId) REFERENCES HealthConcern(healthConcernId),
     FOREIGN KEY (dietaryPreferenceId) REFERENCES DietaryPreference(dietaryPreferenceId)
   )
-`);
+`).run();
 
 // Create the HealthConcern table
-db.run(`
-  CREATE TABLE HealthConcern (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS HealthConcern (
     healthConcernId INTEGER PRIMARY KEY,
     accountId INTEGER,
     concern TEXT,
     FOREIGN KEY (accountId) REFERENCES Account(accountId)
   )
-`);
+`).run();
 
 // Create the DietaryPreference table
-db.run(`
-  CREATE TABLE DietaryPreference (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS DietaryPreference (
     dietaryPreferenceId INTEGER PRIMARY KEY,
     accountId INTEGER,
     preference TEXT,
     FOREIGN KEY (accountId) REFERENCES Account(accountId)
   )
-`);
+`).run();
 
 // Create the Recipe table
-db.run(`
-  CREATE TABLE Recipe (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Recipe (
     recipeId INTEGER PRIMARY KEY,
     name TEXT,
     description TEXT,
@@ -57,11 +59,11 @@ db.run(`
     cookTime REAL,
     dishCategory TEXT
   )
-`);
+`).run();
 
 // Create the Ingredient table
-db.run(`
-  CREATE TABLE Ingredient (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Ingredient (
     ingredientId INTEGER PRIMARY KEY,
     recipeId INTEGER,
     name TEXT,
@@ -70,141 +72,181 @@ db.run(`
     FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId),
     FOREIGN KEY (unitId) REFERENCES Unit(unitId)
   )
-`);
+`).run();
 
 // Create the Unit table
-db.run(`
-  CREATE TABLE Unit (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Unit (
     unitId INTEGER PRIMARY KEY,
     name TEXT
   )
-`);
+`).run();
 
 // Create the Instruction table
-db.run(`
-  CREATE TABLE Instruction (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Instruction (
     instructionId INTEGER PRIMARY KEY,
     recipeId INTEGER,
     instruction TEXT,
     FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId)
   )
-`);
+`).run();
 
 // Create the Tag table
-db.run(`
-  CREATE TABLE Tag (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Tag (
     tagId INTEGER PRIMARY KEY,
     name TEXT
   )
-`);
+`).run();
 
 // Create the RecipeTag table
-db.run(`
-  CREATE TABLE RecipeTag (
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS RecipeTag (
     recipeId INTEGER,
     tagId INTEGER,
     FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId),
     FOREIGN KEY (tagId) REFERENCES Tag(tagId)
   )
-`);
+`).run();
 
-// Create the FavoritreRecipe table 
-db.run(`
-  CREATE TABLE FavoriteRecipe (
+// Create the FavoriteRecipe table 
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS FavoriteRecipe (
     accountId INTEGER,
     recipeId INTEGER,
     FOREIGN KEY (accountId) REFERENCES Account(accountId),
     FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId)
   )
-`);
-
+`).run();
 
 // insert data into the tables
-db.serialize(() => {
+
     // insert into Account
-    db.run(`
-      INSERT INTO Account (email, username, password, authPost) 
-      VALUES ('john@example.com', 'johndoe', 'password', 1)
-    `);
-  
-    // insert into HealthConcern
-    db.run(`
-      INSERT INTO HealthConcern (accountId, concern) 
-      VALUES (1, 'Diabetes')
-    `);
-  
-    // insert into DietaryPreference
-    db.run(`
-      INSERT INTO DietaryPreference (accountId, preference) 
-      VALUES (1, 'Vegetarian')
-    `);
-  
-    // insert into Recipe
-    db.run(`
-      INSERT INTO Recipe (name, description, photo, preparationTime, cookTime, dishCategory) 
-      VALUES ('Spaghetti Carbonara', 'Classic Italian pasta dish with eggs, pancetta, and cheese', 'https://example.com/spaghetti_carbonara.jpg', 10.0, 20.0, 'Pasta')
-    `);
-  
-    // insert into Unit
-    db.run(`
-      INSERT INTO Unit (name) 
-      VALUES ('Cup')
-    `);
-  
-    // insert into Ingredient
-    db.run(`
-      INSERT INTO Ingredient (recipeId, name, quantity, unitId) 
-      VALUES (1, 'Spaghetti', 8, 1)
-    `);
+    db.prepare(`
+    INSERT INTO Account (email, username, password, authPost) 
+    VALUES (?, ?, ?, ?)
+  `).run('john@example.com', 'johndoe', 'password', 1);
 
+  // insert into HealthConcern
+  db.prepare(`
+    INSERT INTO HealthConcern (accountId, concern) 
+    VALUES (?, ?)
+  `).run(1, 'Diabetes');
 
-    // Insert into Instruction
-db.run(`
-INSERT INTO Instruction (recipeId, instruction)
-VALUES 
-  (1, 'Preheat the oven to 375 degrees F (190 degrees C).'),
-  (1, 'In a large bowl, cream together butter and sugar until smooth.'),
-  (1, 'Beat in the eggs one at a time, then stir in the vanilla.'),
-  (1, 'Combine flour, baking powder, and salt; gradually stir into the creamed mixture.'),
-  (1, 'Stir in the chocolate chips.'),
-  (1, 'Drop by rounded tablespoonfuls onto ungreased cookie sheets.'),
-  (1, 'Bake for 8 to 10 minutes in the preheated oven.'),
-  (1, 'Allow cookies to cool on baking sheet for 5 minutes before removing to a wire rack to cool completely.');
-`);
+  // insert into DietaryPreference
+  db.prepare(`
+    INSERT INTO DietaryPreference (accountId, preference) 
+    VALUES (?, ?)
+  `).run(1, 'Vegetarian');
+
+// insert into Recipe
+db.prepare(`
+INSERT INTO Recipe (name, description, photo, preparationTime, cookTime, dishCategory) 
+VALUES (?, ?, ?, ?, ?, ?)
+`).run(
+'Spaghetti Carbonara',
+'Classic Italian pasta dish with eggs, pancetta, and cheese',
+'https://example.com/spaghetti_carbonara.jpg',
+10.0,
+20.0,
+'Pasta'
+);
+
+// insert into Unit
+db.prepare(`
+INSERT INTO Unit (name) 
+VALUES (?)
+`).run('Cup');
+
+// insert into Ingredient
+db.prepare(`
+INSERT INTO Ingredient (recipeId, name, quantity, unitId) 
+VALUES (?, ?, ?, ?)
+`).run(1, 'Spaghetti', 8, 1);
 
 // Insert into Instruction
-db.run(`
-INSERT INTO Instruction (recipeId, instruction)
-VALUES 
-  (2, 'Bring a large pot of salted water to a boil.'),
-  (2, 'Add pasta and cook for 8 to 10 minutes or until al dente; drain.'),
-  (2, 'In a large skillet, cook and stir bacon over medium heat until crisp.'),
-  (2, 'Remove bacon with a slotted spoon and drain on paper towels, leaving the grease in the skillet.'),
-  (2, 'Add garlic and onion to the bacon grease and cook until onion is tender.'),
-  (2, 'Add tomatoes, cream, salt, and pepper.'),
-  (2, 'Reduce heat to low and add Parmesan cheese.'),
-  (2, 'Cook over low heat until the cheese is melted.'),
-  (2, 'Add cooked pasta and toss to coat with sauce.'),
-  (2, 'Crumble bacon over the top and serve.');
-`);
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Preheat the oven to 375 degrees F (190 degrees C).'
+);
 
-// Insert into Instruction
-db.run(`
-INSERT INTO Instruction (recipeId, instruction)
-VALUES 
-  (3, 'Heat oven to 350°F.'),
-  (3, 'Mix flour, granulated sugar, baking powder and salt in large bowl.'),
-  (3, 'Cut in butter until mixture resembles coarse crumbs.'),
-  (3, 'Add milk and egg; stir just until moistened.'),
-  (3, 'Stir in 1 cup chocolate chips.'),
-  (3, 'Spread into greased 8-inch square baking pan.'),
-  (3, 'Sprinkle with remaining 1/2 cup chocolate chips.'),
-  (3, 'Bake 25 to 30 min. or until golden brown.'),
-  (3, 'Cool completely in pan on wire rack.'),
-  (3, 'Cut into squares.');
-`);
-})
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'In a large bowl, cream together butter and sugar until smooth.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Beat in the eggs one at a time, then stir in the vanilla.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Combine flour, baking powder, and salt; gradually stir into the creamed mixture.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Stir in the chocolate chips.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Drop by rounded tablespoonfuls onto ungreased cookie sheets.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Bake for 8 to 10 minutes in the preheated oven.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  1,
+  'Allow cookies to cool on baking sheet for 5 minutes before removing to a wire rack to cool completely.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  2,
+  'Bring a large pot of salted water to a boil.'
+);
+
+db.prepare(`
+  INSERT INTO Instruction (recipeId, instruction)
+  VALUES (?, ?)
+`).run(
+  2,
+  'Add pasta and cook for 8 to 10 minutes or until al dente; drain.'
+);
 
 
-// Close the database connection
+// Close database 
+
 db.close();
