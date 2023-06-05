@@ -1,0 +1,185 @@
+{{> header }}
+
+<body>
+    <form method="post">
+        <div class="container mt-5">
+            <h1>Create Recipe</h1>
+            <div class="form-group">
+                <label for="name">Recipe Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="photo">Photo URL:</label>
+                <input type="text" class="form-control" id="photo" name="photo" required>
+            </div>
+            <div class="form-group">
+                <label for="preparationTime">Preparation Time (in minutes):</label>
+                <input type="number" class="form-control" id="preparationTime" name="preparationTime" required>
+            </div>
+            <div class="form-group">
+                <label for="cookTime">Cook Time (in minutes):</label>
+                <input type="number" class="form-control" id="cookTime" name="cookTime" required>
+            </div>
+            <div class="form-group">
+                <label for="dishCategory">Dish Category:</label>
+                <select class="form-control" id="dishCategory" name="dishCategory" required>
+                    <option value="Appetizer">Appetizer</option>
+                    <option value="Main Course">Main Course</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Snack">Snack</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Instructions">Instructions:</label>
+                <textarea class="form-control" id="Instructions" name="Instructions" required></textarea>
+            </div>
+        </div>
+
+        <div class="container">
+            <label for="Ingredients">Ingredients:</label>
+            <form action="/submit" method="POST" id="myForm">
+                <div id="ingredientContainer">
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" name="ingredient[]" placeholder="Ingredient">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" name="quantity[]" placeholder="Quantity">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" name="unit[]" placeholder="Unit">
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-danger"
+                                onclick="removeIngredient(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-primary" onclick="addIngredient()">Add Ingredient</button>
+                </div>
+            </form>
+        </div> <br>
+
+        <div class="container">
+            <label for="Tags">Tags:</label>
+            <form action="/submit" method="POST" id="myForm">
+                <div id="tagContainer">
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" name="tag[]" placeholder="Tag">
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-danger" onclick="removeTag(this)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-primary" onclick="addTag()">Add Tag</button>
+                </div>
+            </form>
+            <br>
+            <input type="submit" class="btn btn-success" value="Create Recipe">
+        </div>
+
+    </form>
+    <script>
+        function addIngredient() {
+            const ingredientContainer = document.getElementById('ingredientContainer');
+            const ingredientDiv = document.createElement('div');
+            ingredientDiv.classList.add('form-row', 'mt-2');
+
+            const ingredientCol1 = document.createElement('div');
+            ingredientCol1.classList.add('col');
+            const ingredientInput1 = document.createElement('input');
+            ingredientInput1.type = 'text';
+            ingredientInput1.classList.add('form-control');
+            ingredientInput1.name = 'ingredient[]';
+            ingredientInput1.placeholder = 'Ingredient';
+            ingredientCol1.appendChild(ingredientInput1);
+
+            const ingredientCol2 = document.createElement('div');
+            ingredientCol2.classList.add('col');
+            const ingredientInput2 = document.createElement('input');
+            ingredientInput2.type = 'text';
+            ingredientInput2.classList.add('form-control');
+            ingredientInput2.name = 'quantity[]';
+            ingredientInput2.placeholder = 'Quantity';
+            ingredientCol2.appendChild(ingredientInput2);
+
+            const ingredientCol3 = document.createElement('div');
+            ingredientCol3.classList.add('col');
+            const ingredientInput3 = document.createElement('input');
+            ingredientInput3.type = 'text';
+            ingredientInput3.classList.add('form-control');
+            ingredientInput3.name = 'unit[]';
+            ingredientInput3.placeholder = 'Unit';
+            ingredientCol3.appendChild(ingredientInput3);
+
+            const ingredientCol4 = document.createElement('div');
+            ingredientCol4.classList.add('col-auto');
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.classList.add('btn', 'btn-danger');
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = function () { removeIngredient(this); };
+            ingredientCol4.appendChild(removeButton);
+
+            ingredientDiv.appendChild(ingredientCol1);
+            ingredientDiv.appendChild(ingredientCol2);
+            ingredientDiv.appendChild(ingredientCol3);
+            ingredientDiv.appendChild(ingredientCol4);
+
+            ingredientContainer.appendChild(ingredientDiv);
+        }
+
+        function removeIngredient(button) {
+            const ingredientDiv = button.parentNode.parentNode;
+            const ingredientContainer = ingredientDiv.parentNode;
+            ingredientContainer.removeChild(ingredientDiv);
+        }
+
+        function addTag() {
+            const tagContainer = document.getElementById('tagContainer');
+            const tagDiv = document.createElement('div');
+            tagDiv.classList.add('form-row', 'mt-2');
+
+            const tagCol1 = document.createElement('div');
+            tagCol1.classList.add('col');
+            const tagInput = document.createElement('input');
+            tagInput.type = 'text';
+            tagInput.classList.add('form-control');
+            tagInput.name = 'tag[]';
+            tagInput.placeholder = 'Tag';
+            tagCol1.appendChild(tagInput);
+
+            const tagCol2 = document.createElement('div');
+            tagCol2.classList.add('col-auto');
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.classList.add('btn', 'btn-danger');
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = function () { removeTag(this); };
+            tagCol2.appendChild(removeButton);
+
+            tagDiv.appendChild(tagCol1);
+            tagDiv.appendChild(tagCol2);
+
+            tagContainer.appendChild(tagDiv);
+        }
+
+        function removeTag(button) {
+            const tagDiv = button.parentNode.parentNode;
+            const tagContainer = tagDiv.parentNode;
+            tagContainer.removeChild(tagDiv);
+        }
+    </script>
+
+
+
+
+</body>
