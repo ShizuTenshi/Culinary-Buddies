@@ -1,55 +1,63 @@
 {{> header }}
-  <body>
 
-    <div class="container-fluid">
-      <div class="row">
+<body>
 
-        <!-- Sidebar with user information -->
-        <div class="col-md-3 bg-light">
-          <div class="py-3 text-center">
-            <img src="path/to/avatar.jpg" class="rounded-circle img-fluid">
-            <h2 class="mt-2">Username</h2>
-          </div>
-          <div class="px-3 pb-3">
-            <h4>Dietary Preference</h4>
-            <p>Vegan</p>
-            <h4>Health Issues</h4>
-            <p>None</p>
-          </div>
-          <div class="px-3 pb-3">
-            <a href="/editAccount" class="btn btn-primary btn-block">Edit Account</a>
-          </div>
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Sidebar with user information -->
+      <div class="col-md-3 bg-light">
+        <div class="py-3 text-center">
+          <img src="path/to/avatar.jpg" class="rounded-circle img-fluid">
+
+          <h2 class="mt-2"> {{username}} </h2>
         </div>
+        <div class="px-3 pb-3">
+          <h4>Dietary Preference</h4>
+          {{#dietary}}
+          <p> {{preference}} </p>
+          {{/dietary}}
 
-        <!-- Recipe list -->
-        <div class="col-md-9">
-          <h2 class="mt-4">Recipes</h2>
-          <hr>
-          <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="path/to/recipe1.jpg" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Recipe 1 Title</a>
-                  </h4>
-                  <p class="card-text">Created by <a href="#">Creator Name</a></p>
-                </div>
+          <h4>Health Issues</h4>
+
+          {{#health}}
+          <p>{{concern}}</p>
+          {{/health}}
+
+        </div>
+        <div class="px-3 pb-3">
+          <a href="/editAccount" class="btn btn-primary btn-block">Edit Account</a>
+        </div>
+      </div>
+
+      <!-- Recipe list -->
+      <div class="col-md-9">
+        <h2 class="mt-4">Recipes</h2>
+        <hr>
+        <div class="row">
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+              <a href="#"><img class="card-img-top" src="path/to/recipe1.jpg" alt=""></a>
+              <div class="card-body">
+                <h4 class="card-title">
+                  <a href="#">Recipe 1 Title</a>
+                </h4>
+                <p class="card-text">Created by <a href="#">Creator Name</a></p>
               </div>
             </div>
-            <!-- more recipe cards here -->
           </div>
-          <a href="#" class="btn btn-primary btn-lg float-right">Create Recipe</a>
-          <a href="#" class="btn btn-secondary btn-lg float-right mr-3">Chat</a>
+          <!-- more recipe cards here -->
         </div>
-
+        <a href="/createRecipe" class="btn btn-primary btn-lg float-right">Create Recipe</a>
+        <a href="#" class="btn btn-secondary btn-lg float-right mr-3">Chat</a>
       </div>
+
     </div>
+  </div>
 
-    <!-- Bootstrap scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+  <!-- Bootstrap scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
 
-  </body>
-
+</body>
