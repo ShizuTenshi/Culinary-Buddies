@@ -49,6 +49,7 @@ db.prepare(`
 `).run();
 
 // Create the Recipe table
+
 db.prepare(`
   CREATE TABLE IF NOT EXISTS Recipe (
     recipeId INTEGER PRIMARY KEY,
@@ -56,10 +57,11 @@ db.prepare(`
     description TEXT,
     photo TEXT,
     preparationTime REAL,
-    cookTime REAL,
-    dishCategory TEXT
+    instructions TEXT,
+    cookTime REAL
   )
 `).run();
+
 
 // Create the Ingredient table
 db.prepare(`
@@ -82,6 +84,7 @@ db.prepare(`
   )
 `).run();
 
+/*
 // Create the Instruction table
 db.prepare(`
   CREATE TABLE IF NOT EXISTS Instruction (
@@ -91,24 +94,30 @@ db.prepare(`
     FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId)
   )
 `).run();
+*/
+
+// Create the Category table
+
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Category (
+    categoryId INTEGER PRIMARY KEY,
+    recipeId INTEGER,
+    categoryName TEXT,
+    FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId)
+  )
+`).run();
+
 
 // Create the Tag table
 db.prepare(`
   CREATE TABLE IF NOT EXISTS Tag (
     tagId INTEGER PRIMARY KEY,
-    name TEXT
+    recipeId INTEGER,
+    name TEXT,
+    FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId)
   )
 `).run();
 
-// Create the RecipeTag table
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS RecipeTag (
-    recipeId INTEGER,
-    tagId INTEGER,
-    FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId),
-    FOREIGN KEY (tagId) REFERENCES Tag(tagId)
-  )
-`).run();
 
 // Create the FavoriteRecipe table 
 db.prepare(`
@@ -142,15 +151,14 @@ db.prepare(`
 
 // insert into Recipe
 db.prepare(`
-INSERT INTO Recipe (name, description, photo, preparationTime, cookTime, dishCategory) 
-VALUES (?, ?, ?, ?, ?, ?)
+INSERT INTO Recipe (name, description, photo, preparationTime, cookTime) 
+VALUES (?, ?, ?, ?, ?)
 `).run(
 'Spaghetti Carbonara',
 'Classic Italian pasta dish with eggs, pancetta, and cheese',
 'https://example.com/spaghetti_carbonara.jpg',
 10.0,
-20.0,
-'Pasta'
+20.0
 );
 
 // insert into Unit
@@ -165,6 +173,7 @@ INSERT INTO Ingredient (recipeId, name, quantity, unitId)
 VALUES (?, ?, ?, ?)
 `).run(1, 'Spaghetti', 8, 1);
 
+/*
 // Insert into Instruction
 db.prepare(`
   INSERT INTO Instruction (recipeId, instruction)
@@ -230,6 +239,7 @@ db.prepare(`
   'Allow cookies to cool on baking sheet for 5 minutes before removing to a wire rack to cool completely.'
 );
 
+
 db.prepare(`
   INSERT INTO Instruction (recipeId, instruction)
   VALUES (?, ?)
@@ -245,7 +255,7 @@ db.prepare(`
   2,
   'Add pasta and cook for 8 to 10 minutes or until al dente; drain.'
 );
-
+*/
 
 // Close database 
 
