@@ -10,75 +10,20 @@
                     <form id="signup-form" class="form" action="/signUpPage" method="POST">
                         <div class="form-group">
                             <label for="inputName">Name</label>
-                            <input type="text" name="name" class="form-control" id="inputName" placeholder="Enter your name" required>
-                        </div>
+                            <input type="text" name="username" class="form-control" id="inputName" placeholder="Enter your name" required>
+                        </div> <br>
                         <div class="form-group">
                             <label for="inputEmail">Email address</label>
                             <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Enter your email" required>
-                        </div>
+                        </div><br>
                         <div class="form-group">
                             <label for="inputPassword">Password</label>
                             <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Enter a password" required>
-                        </div>
+                        </div><br>
                         <div class="form-group">
                             <label for="inputConfirmPassword">Confirm Password</label>
                             <input type="password" name="confirmPassword" class="form-control" id="inputConfirmPassword" placeholder="Confirm your password" required>
                         </div>
-
-                        <div class="form-group">
-                            <label for="dietary">Dietary preferences:</label>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="vegan" name="dietary[]" value="vegan">
-                              <label class="form-check-label" for="vegan">Vegan</label>
-                            </div>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="vegetarian" name="dietary[]" value="vegetarian">
-                              <label class="form-check-label" for="vegetarian">Vegetarian</label>
-                            </div>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="halal" name="dietary[]" value="halal">
-                              <label class="form-check-label" for="halal">Halal</label>
-                            </div>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="kosher" name="dietary[]" value="kosher">
-                              <label class="form-check-label" for="kosher">Kosher</label>
-                            </div>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="other-dietary" name="dietary[]" value="other">
-                              <label class="form-check-label" for="other-dietary">Other:</label>
-                              <input type="text" class="form-control" id="other-dietary-input" name="other_dietary">
-                            </div>
-                          </div>
-              
-                          
-                          <div class="form-group">
-                              <label for="health-concerns">Health Concerns:</label>
-                              <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="diabetes" name="health_concerns[]" value="diabetes">
-                                <label class="form-check-label" for="diabetes">Diabetes</label>
-                              </div>
-                              <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="cardiovascular-disease" name="health_concerns[]" value="cardiovascular-disease">
-                                <label class="form-check-label" for="cardiovascular-disease">Cardiovascular Disease</label>
-                              </div>
-                              <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="celiac-disease" name="health_concerns[]" value="celiac-disease">
-                                <label class="form-check-label" for="celiac-disease">Celiac Disease</label>
-                              </div>
-                              <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="inflammatory-bowel-disease" name="health_concerns[]" value="inflammatory-bowel-disease">
-                                <label class="form-check-label" for="inflammatory-bowel-disease">Inflammatory Bowel Disease</label>
-                              </div>
-                              <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="chronic-kidney-disease" name="health_concerns[]" value="chronic-kidney-disease">
-                                <label class="form-check-label" for="chronic-kidney-disease">Chronic Kidney Disease</label>
-                              </div>
-                              <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="other-health-concerns" name="health_concerns[]" value="other">
-                                <label class="form-check-label" for="other-health-concerns">Other:</label>
-                                <input type="text" class="form-control" id="other-health-concerns-input" name="other_health_concerns">
-                              </div>
-                            </div>
 
                         <div class="info">
                             <p style="color:red;">{{messages.regError}}</p>
