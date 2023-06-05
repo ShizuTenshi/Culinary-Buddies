@@ -19,6 +19,9 @@ app.use(cookieSession({
 }));
 
 let userModel = require('./models/userModel');
+let dietaryPreferenceModel = require('./models/dietaryPreferenceModel');
+let healthConcernModel = require('./models/healthConcernModel');
+
 
 // ----------------------------------------------------------------------------------
 app.get('/', function (req, res) {
@@ -49,7 +52,7 @@ app.post('/signInPage', function (req, res) {
     res.redirect('/signInPage');
   }
 
-  req.session.sessionId = verifyId;
+  req.session.sessionId = verifyId.accountId;
   res.redirect('/homePage');
 })
 
@@ -59,6 +62,7 @@ app.post('/signUpPage', function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
   let confirmPassword = req.body.confirmPassword;
+
 
   if (password !== confirmPassword) {
     req.flash('regError', "passwords don't match");
@@ -75,13 +79,11 @@ app.post('/signUpPage', function (req, res) {
     res.redirect('/signUpPage');
   }
   else {
-    userModel.insertUser(username, email, password);
-    req.flash('reg', "account was successfully created!");
-    res.redirect('/signInPage');
-
-
+    let accountId = userModel.insertUser(username, email, password);
+    req.session.sessionId = accountId;
+    req.flash('reg', "account was successfully created you can now add your information  !");
+    res.redirect('/editAccount');
   }
-
 })
 
 
@@ -94,7 +96,11 @@ app.get('/homePage', function (req, res) {
 })
 
 app.get('/profilePage', function (req, res) {
-  res.render('profilePage');
+  let dietaryList = dietaryPreferenceModel.getDietaryPreferenceList(req.session.sessionId);
+  let healthConcern = healthConcernModel.getHealthConcernList(req.session.sessionId);
+  let username = userModel.getUsernameFromId(req.session.sessionId);
+
+  res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username });
 })
 
 app.get('/editAccount', function (req, res) {
@@ -105,6 +111,10 @@ app.get('/myProfile', function (req, res) {
   res.redirect('/profilePage');
 })
 
+app.get('/createRecipe', function (req, res) {
+  res.render('createRecipe');
+})
+
 app.post('/editAccount', function (req, res) {
   let userId = req.session.sessionId; // Get the user ID from the session
 
@@ -112,25 +122,55 @@ app.post('/editAccount', function (req, res) {
   let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
-  let dietaryPreferences = req.body.dietary;
+
+  let vegan = req.body.vegan;
+  let vegetarian = req.body.vegetarian;
+  let halal = req.body.halal;
+  let kosher = req.body.kosher;
   let otherDietary = req.body.other_dietary;
-  let healthConcerns = req.body.health_concerns;
+
+  let dietaryOptions = [];
+  if (vegan != undefined) dietaryOptions.push(vegan);
+  if (vegetarian != undefined) dietaryOptions.push(vegetarian);
+  if (halal != undefined) dietaryOptions.push(halal);
+  if (kosher != undefined) dietaryOptions.push(kosher);
+  if (otherDietary) dietaryOptions.push(otherDietary);
+
+  let diabetes = req.body.diabetes;
+  let cardiovascular_disease = req.body.cardiovascular_disease;
+  let celiac_disease = req.body.celiac_disease;
+  let inflammatory_bowel_disease = req.body.inflammatory_bowel_disease;
+  let chronic_kidney_disease = req.body.chronic_kidney_disease;
   let otherHealthConcerns = req.body.other_health_concerns;
 
-  // Update the user's account information in the userModel
-  userModel.updateUser(userId, {
-    username: username,
-    email: email,
-    password: password,
-    dietaryPreferences: dietaryPreferences,
-    otherDietary: otherDietary,
-    healthConcerns: healthConcerns,
-    otherHealthConcerns: otherHealthConcerns
-  });
+  let healthConcerns = [];
+  if (diabetes != undefined) healthConcerns.push(diabetes);
+  if (cardiovascular_disease != undefined) healthConcerns.push(cardiovascular_disease);
+  if (celiac_disease != undefined) healthConcerns.push(celiac_disease);
+  if (inflammatory_bowel_disease != undefined) healthConcerns.push(inflammatory_bowel_disease);
+  if (chronic_kidney_disease) healthConcerns.push(chronic_kidney_disease);
+  if (otherHealthConcerns) healthConcerns.push(otherHealthConcerns);
 
-  req.flash('success', 'Account information updated successfully');
-  res.redirect('/profilePage');
+  // Update Account
+  userModel.updateAccount(userId, email, username, password);
+
+  // Delete Old Dietary Options
+  dietaryPreferenceModel.deleteOldDietaryOptions(userId);
+
+  // Delete Old Dietary Options
+  healthConcernModel.deleteOldHealthOptions(userId);
+
+  // Update Dietary Options
+  dietaryPreferenceModel.updateDietaryOptions(userId, dietaryOptions);
+
+  // Update Health Concerns
+  healthConcernModel.updateHealthConcerns(userId, healthConcerns);
+
+  req.flash('reg', "Account information was successfully updated !");
+  res.redirect('/editAccount');
 })
+
+
 
 
 /*
