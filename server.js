@@ -21,6 +21,8 @@ app.use(cookieSession({
 let userModel = require('./models/userModel');
 let dietaryPreferenceModel = require('./models/dietaryPreferenceModel');
 let healthConcernModel = require('./models/healthConcernModel');
+let recipeModel = require('./models/recipeModel');
+
 
 
 // ----------------------------------------------------------------------------------
@@ -171,7 +173,36 @@ app.post('/editAccount', function (req, res) {
 })
 
 
+app.post('/createRecipe', function (req, res) {
+  const name = req.body.name;
+  const description = req.body.description;
+  const photo = req.body.photo;
+  const preparationTime = req.body.preparationTime;
+  const cookTime = req.body.cookTime;
+  const dishCategory = req.body.dishCategory;
+  const instructions = req.body.instructions;
+  const ingredients = req.body['ingredient[]'];
+  const quantities = req.body['quantity[]'];
+  const units = req.body['unit[]'];
+  const tags = req.body['tag[]'];
 
+  let combinedIngredients;
+
+  if (Array.isArray(ingredients)) {
+    combinedIngredients = ingredients.map((ingredient, index) => {
+      const quantity = quantities[index];
+      const unit = units[index];
+      return { ingredient, quantity, unit };
+    })
+  }
+  const recipeId = recipeModel.addNewRecipe(name, description, photo, preparationTime, cookTime, instructions);
+  recipeModel.addNewCategory(recipeId, dishCategory);
+  recipeModel.addNewTags(recipeId, tags);
+  recipeModel.addNewIngredients(recipeId, combinedIngredients);
+
+  req.flash('reg', "Recipe was successfully created !");
+  res.redirect('/createRecipe');
+})
 
 /*
 * This is a middleware function that tests if the user is connected when he wants to
