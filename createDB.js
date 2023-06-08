@@ -58,7 +58,9 @@ db.prepare(`
     photo TEXT,
     preparationTime REAL,
     instructions TEXT,
-    cookTime REAL
+    cookTime REAL,
+    accountId INTEGER,
+    FOREIGN KEY (accountId) REFERENCES Account(accountId)
   )
 `).run();
 
@@ -70,19 +72,20 @@ db.prepare(`
     recipeId INTEGER,
     name TEXT,
     quantity REAL,
-    unitId INTEGER,
-    FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId),
-    FOREIGN KEY (unitId) REFERENCES Unit(unitId)
+    unit TEXT,
+    FOREIGN KEY (recipeId) REFERENCES Recipe(recipeId)
   )
 `).run();
 
 // Create the Unit table
+/*
 db.prepare(`
   CREATE TABLE IF NOT EXISTS Unit (
     unitId INTEGER PRIMARY KEY,
     name TEXT
   )
 `).run();
+*/
 
 /*
 // Create the Instruction table
@@ -151,27 +154,30 @@ db.prepare(`
 
 // insert into Recipe
 db.prepare(`
-INSERT INTO Recipe (name, description, photo, preparationTime, cookTime) 
-VALUES (?, ?, ?, ?, ?)
+INSERT INTO Recipe (name, description, photo, preparationTime, cookTime, accountId) 
+VALUES (?, ?, ?, ?, ?, ?)
 `).run(
 'Spaghetti Carbonara',
 'Classic Italian pasta dish with eggs, pancetta, and cheese',
 'https://example.com/spaghetti_carbonara.jpg',
 10.0,
-20.0
+20.0,
+1
 );
 
 // insert into Unit
+/*
 db.prepare(`
 INSERT INTO Unit (name) 
 VALUES (?)
 `).run('Cup');
+*/
 
 // insert into Ingredient
 db.prepare(`
-INSERT INTO Ingredient (recipeId, name, quantity, unitId) 
+INSERT INTO Ingredient (recipeId, name, quantity, unit) 
 VALUES (?, ?, ?, ?)
-`).run(1, 'Spaghetti', 8, 1);
+`).run(1, 'Spaghetti', 8, "CM" );
 
 /*
 // Insert into Instruction
