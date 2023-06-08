@@ -63,3 +63,9 @@ exports.getAllRecipes = () => {
     }
     return list;
 }
+
+exports.deleteRecipe = (recipeId) => {
+    // Delete the recipe from the Recipe table
+    db.prepare("DELETE FROM Recipe WHERE recipeId = ?").run([recipeId]);
+  }
+  
