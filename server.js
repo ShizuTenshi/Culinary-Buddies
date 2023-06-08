@@ -237,6 +237,16 @@ app.post('/applyFilters', function (req, res) {
 })
 
 
+app.get('/recipePageConnected/:id', function (req, res) {
+  const recipe = recipeModel.getRecipeById(req.params.id);
+  const tag = recipeModel.getTagByRecipeId(req.params.id);
+  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
+  let postedBy;
+  if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
+})
+
+
 /*
 * This is a middleware function that tests if the user is connected when he wants to
 * access pages that require an authentification.
