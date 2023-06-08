@@ -102,6 +102,7 @@ app.post('/signUpPage', function (req, res) {
 app.use(isAuthenticated);
 
 
+
 app.get('/homePage', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
   console.log(req.session.sessionId)
@@ -237,14 +238,27 @@ app.post('/applyFilters', function (req, res) {
 })
 
 
-app.get('/recipePageConnected/:id', function (req, res) {
-  const recipe = recipeModel.getRecipeById(req.params.id);
-  const tag = recipeModel.getTagByRecipeId(req.params.id);
-  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
+app.get('/recipePageConnected/:id', isOwner, function (req, res) {
+  const recipeId = req.params.id; 
+  const loggedInUserId = req.session.sessionId; 
+
+  // Retrieve the recipe
+  const recipe = recipeModel.getRecipeById(recipeId);
+
+  // Check if the recipe exists and if the logged-in user is the owner
+  if (recipe && recipe.accountId === loggedInUserId) {
+    res.locals.isOwner = true;
+  } else {
+    res.locals.isOwner = false;
+  }
+
+  const tag = recipeModel.getTagByRecipeId(recipeId);
+  const ingredients = recipeModel.getIngredientsByRecipeId(recipeId);
   let postedBy;
   if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
   res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
-})
+});
+
 
 
 /*
@@ -259,6 +273,23 @@ function isAuthenticated(req, res, next) {
   }
 
   res.status(401).send("Please sign in before you proceed");
+}
+
+function isOwner(req, res, next) {
+  const recipeId = req.params.id; 
+  const loggedInUserId = req.session.sessionId; 
+
+  // Retrieve the recipe
+  const recipe = recipeModel.getRecipeById(recipeId);
+
+  // Check if the recipe exists and if the logged-in user is the owner
+  if (recipe && recipe.accountId === loggedInUserId) {
+    res.locals.isOwner = true;
+  } else {
+    res.locals.isOwner = false;
+  }
+
+  next();
 }
 
 
