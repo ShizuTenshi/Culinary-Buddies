@@ -1,1 +1,60 @@
 {{> header }}
+
+<body>
+    <div class="container">
+        <h1>Recipe Filter Page</h1>
+        <form class="form-group" action="/applyFilters" method="POST">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="category">Category:</label>
+                    <select class="form-control" id="category"  name="dishCategory">
+                        <option disabled value="">Choose a Category</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="dessert">Dessert</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="tags">Tags:</label>
+                    <input type="text" class="form-control" name="tags[]" placeholder="Tag">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="tags">Actions:</label> <br>
+
+                    <button class="btn btn-success" id="filter-button">Filter Recipes</button> &nbsp;
+                    <button class="btn btn-danger" id="filter-button"> Clear Filters</button>
+                </div>
+            </div>
+        </form>
+        <br>
+
+        <div class="row mt-4">
+            {{#recipeList}}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{photo}}" class="card-img-top" alt="Recipe {{recipeId}}">
+                    <div class="card-body">
+                        <b> <a href="/recipePage/{{recipeId}}" class="card-title">{{name}}</a> </b> <br> <br>
+                        <p class="card-text">Category: {{category.categoryName}}</p>
+                        <p class="card-text">Creator: {{account.username}}</p>
+                    </div>
+                </div>
+            </div>
+            {{/recipeList}}
+        </div>
+    </div>
+
+    <style>
+        .card {
+            width: 22rem;
+        }
+
+        .card img {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+
+</body>
