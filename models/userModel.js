@@ -35,7 +35,6 @@ exports.updateAccount = (user, email, username, password) => {
 
 
 exports.getUsernameFromId = (user) => {
-  console.log("dd ", user)
   let username = db.prepare('SELECT username FROM Account WHERE accountId = ?').get([user]);
   return username;
 }
