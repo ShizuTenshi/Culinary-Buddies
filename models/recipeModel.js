@@ -13,10 +13,15 @@ exports.addNewCategory = (recipeId, categoryName) => {
     db.prepare('INSERT INTO Category (recipeId, categoryName) VALUES (?, ?)').run([recipeId, categoryName]);
 }
 
-exports.addNewTags = (recipeId, nameList) => {
+exports.addMultipleTags = (recipeId, nameList) => {
+    console.log(nameList)
     for (let i = 0; i < nameList.length; i++) {
         db.prepare('INSERT INTO Tag (recipeId, name) VALUES (?, ?)').run([recipeId, nameList[i]]);
     }
+}
+
+exports.addNewTag = (recipeId, nameList) => {
+    db.prepare('INSERT INTO Tag (recipeId, name) VALUES (?, ?)').run([recipeId, nameList]);
 }
 
 exports.addNewIngredients = (recipeId, combinedIngredients) => {
@@ -49,6 +54,7 @@ exports.getAllRecipesByAccountId = (accountId) => {
 exports.getAllRecipes = () => {
     let list = db.prepare("SELECT * FROM Recipe").all([]);
     for (let x = 0; x < list.length; x++) {
+        //let tags = db.prepare("SELECT name FROM Tag").all([]);
         let account = db.prepare("SELECT username FROM Account WHERE accountId=?").get([list[x].accountId]);
         let category = db.prepare("SELECT categoryName FROM Category WHERE recipeId=?").get([list[x].recipeId]);
         list[x].account = account;
