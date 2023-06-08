@@ -27,7 +27,9 @@ let recipeModel = require('./models/recipeModel');
 
 // ----------------------------------------------------------------------------------
 app.get('/', function (req, res) {
-  res.render('index');
+  const recipeList = recipeModel.getAllRecipes();
+  console.log(req.session.sessionId)
+  res.render('index', {recipeList: recipeList});
 })
 
 app.get('/signInPage', function (req, res) {
@@ -43,6 +45,14 @@ app.get('/signOut', function (req, res) {
   res.redirect('/');
 })
 
+app.get('/recipePage/:id', function (req, res) {
+  const recipe = recipeModel.getRecipeById(req.params.id);
+  const tag = recipeModel.getTagByRecipeId(req.params.id);
+  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
+  let postedBy;
+  if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
+})
 
 
 app.post('/signInPage', function (req, res) {
@@ -55,7 +65,7 @@ app.post('/signInPage', function (req, res) {
   }
 
   req.session.sessionId = verifyId.accountId;
-  res.redirect('/homePage');
+  res.redirect('/profilePage');
 })
 
 
@@ -88,15 +98,16 @@ app.post('/signUpPage', function (req, res) {
   }
 })
 
-
-
 // User needs to be connected for everything beyond this point 
 app.use(isAuthenticated);
 
+
 app.get('/homePage', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
-  res.render('homePage', { recipeList: recipeList });
+  console.log(req.session.sessionId)
+  res.render('homePage', {recipeList: recipeList});
 })
+
 
 app.get('/profilePage', function (req, res) {
   let dietaryList = dietaryPreferenceModel.getDietaryPreferenceList(req.session.sessionId);
@@ -117,15 +128,6 @@ app.get('/myProfile', function (req, res) {
 
 app.get('/createRecipe', function (req, res) {
   res.render('createRecipe');
-})
-
-app.get('/recipePage/:id', function (req, res) {
-  const recipe = recipeModel.getRecipeById(req.params.id);
-  const tag = recipeModel.getTagByRecipeId(req.params.id);
-  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
-  let postedBy;
-  if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
-  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
 })
 
 
@@ -209,13 +211,31 @@ app.post('/createRecipe', function (req, res) {
     })
   }
   const recipeId = recipeModel.addNewRecipe(name, description, photo, preparationTime, cookTime, instructions, userId);
+
+  if (Array.isArray(tags)) {
+    recipeModel.addMultipleTags(recipeId, tags);
+  }
+  else {
+    recipeModel.addNewTag(recipeId, tags);
+  }
   recipeModel.addNewCategory(recipeId, dishCategory);
-  recipeModel.addNewTags(recipeId, tags);
   recipeModel.addNewIngredients(recipeId, combinedIngredients);
 
   req.flash('reg', "Recipe was successfully created !");
   res.redirect('/createRecipe');
 })
+
+app.post('/applyFilters', function (req, res) {
+  let category = req.body.dishCategory;
+  let tags = req.body['tags[]'];
+
+  console.log(category, tags);
+
+
+
+  res.render('homePage', { category: category, tags: tags });
+})
+
 
 /*
 * This is a middleware function that tests if the user is connected when he wants to
