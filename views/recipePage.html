@@ -40,6 +40,14 @@
                 {{/tag}}
               </ul>
               <h6 class="card-subtitle mt-4">Posted By: <a href="#">{{postedBy.username}}</a></h6>
+              {{#isConnected}}
+              {{#isOwner}}
+              <div class="mt-4">
+                  <a href="/editRecipe/{{recipe.id}}" class="btn btn-primary">Edit Recipe</a>
+                  <a href="/deleteRecipe/{{recipe.id}}" class="btn btn-danger">Delete Recipe</a>
+              </div>
+              {{/isOwner}}
+              {{/isConnected}}
             </div>
           </div>
         </div>
