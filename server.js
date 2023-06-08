@@ -49,10 +49,13 @@ app.get('/recipePage/:id', function (req, res) {
   const recipe = recipeModel.getRecipeById(req.params.id);
   const tag = recipeModel.getTagByRecipeId(req.params.id);
   const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
+  const category = recipeModel.getCategoryByRecipeId(req.params.id);
+  
   let postedBy;
   if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
-  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });
 })
+
 
 
 app.post('/signInPage', function (req, res) {
@@ -105,7 +108,6 @@ app.use(isAuthenticated);
 
 app.get('/homePage', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
-  console.log(req.session.sessionId)
   res.render('homePage', {recipeList: recipeList});
 })
 
@@ -230,11 +232,28 @@ app.post('/applyFilters', function (req, res) {
   let category = req.body.dishCategory;
   let tags = req.body['tags[]'];
 
-  console.log(category, tags);
+  let recipeList;
 
+  if (category === "All" && tags === "") {
+    recipeList = recipeModel.getAllRecipes();
+  }
 
+  else if (category === "All" && tags !== "") {
+    recipeList = recipeModel.getRecipeByTags(tags);
+  }
 
-  res.render('homePage', { category: category, tags: tags });
+  else if (tags === "" && category !== "All") {
+    recipeList = recipeModel.getRecipeByCategory(category);
+  }
+
+  else if (category !== "All" && tags !== "") {
+    recipeList = recipeModel.getRecipeByCategoryAndTags(category, tags);
+  }
+
+  else {
+    console.error("You need to choose a filter");
+  }
+  res.render('homePage', { recipeList: recipeList });
 })
 
 
