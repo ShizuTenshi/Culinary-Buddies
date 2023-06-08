@@ -3,44 +3,31 @@
 <body>
     <div class="container">
         <h1>Recipe Filter Page</h1>
-        <div class="row">
-            <div class="col-md-4">
-                <label for="category">Category:</label>
-                <select class="form-control" id="category">
-                    <option disabled value="">Choose a Category</option>
-                    <option value="breakfast">Breakfast</option>
-                    <option value="lunch">Lunch</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="dessert">Dessert</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label for="tags">Tags:</label>
-                <select class="form-control" id="tags">
-                    <option disabled value="">Choose a tag</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="gluten-free">Gluten-Free</option>
-                    <option value="dairy-free">Dairy-Free</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label for="health-issues">Health Issues:</label>
-                <select class="form-control" id="health-issues">
-                    <option disabled value=""> Choose a health issue</option>
-                    <option value="diabetes">Diabetes</option>
-                    <option value="hypertension">Hypertension</option>
-                    <option value="allergies">Allergies</option>
-                    <option value="weight-loss">Weight Loss</option>
-                </select>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-12">
+        <form class="form-group" action="/applyFilters" method="POST">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="category">Category:</label>
+                    <select class="form-control" id="category"  name="dishCategory">
+                        <option disabled value="">Choose a Category</option>
+                        <option value="Appetizer">Appetizer</option>
+                        <option value="Main Course">Main Course</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Snack">Snack</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="tags">Tags:</label>
+                    <input type="text" class="form-control" name="tags[]" placeholder="Tag">
+                </div>
+
+                <div class="col-md-4">
+                    <label for="tags">Actions:</label> <br>
+
                     <button class="btn btn-success" id="filter-button">Filter Recipes</button> &nbsp;
                     <button class="btn btn-danger" id="filter-button"> Clear Filters</button>
                 </div>
             </div>
-        </div>
+        </form>
         <br>
 
         <div class="row mt-4">
