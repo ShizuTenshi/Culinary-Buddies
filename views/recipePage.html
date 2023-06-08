@@ -16,13 +16,13 @@
               <h3 class="card-title">Recipe Details</h3>
             </div>
             <div class="card-body">
-              <h5 class="card-title">Recipe Name: {{recipeName}}</h5>
-              <p class="card-text">Description: {{description}}</p>
-              <p><img src="{{recipe.photoUrl}}" class="card-img-top" alt="Recipe Photo"></p>
-              <p class="card-text">Preparation Time: {{preparationTime}} minutes</p>
-              <p class="card-text">Cook Time: {{cookTime}} minutes</p>
+              <h5 class="card-title">Recipe Name: {{recipe.name}}</h5>
+              <p class="card-text">Description: {{recipe.description}}</p>
+              <p><img src="{{recipe.photo}}" class="card-img-top" alt="Recipe Photo"></p>
+              <p class="card-text">Preparation Time: {{recipe.preparationTime}} minutes</p>
+              <p class="card-text">Cook Time: {{recipe.cookTime}} minutes</p>
               <p class="card-text">Dish Category: {{dishCategory}}</p>
-              <p class="card-text">Instructions: {{instructions}}</p>
+              <p class="card-text">Instructions: {{recipe.instructions}}</p>
               <h6 class="card-subtitle mt-4">Ingredients:</h6>
               <ul class="list-group">
                 {{#ingredients}}
@@ -35,11 +35,11 @@
               </ul>
               <h6 class="card-subtitle mt-4">Tags:</h6>
               <ul class="list-inline">
-                {{#tags}}
-                <li class="list-inline-item"><a href="/search?tag={{tag}}">#{{tag}}</a></li>
-                {{/tags}}
+                {{#tag}}
+                <li class="list-inline-item"><a href="#">#{{name}}</a></li>
+                {{/tag}}
               </ul>
-              <h6 class="card-subtitle mt-4">Posted By: <a href="/userProfile/{{username}}">{{username}}</a></h6>
+              <h6 class="card-subtitle mt-4">Posted By: <a href="#">{{postedBy.username}}</a></h6>
             </div>
           </div>
         </div>
