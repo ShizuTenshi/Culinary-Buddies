@@ -94,15 +94,17 @@ app.post('/signUpPage', function (req, res) {
 app.use(isAuthenticated);
 
 app.get('/homePage', function (req, res) {
-  res.render('homePage');
+  const recipeList = recipeModel.getAllRecipes();
+  res.render('homePage', { recipeList: recipeList });
 })
 
 app.get('/profilePage', function (req, res) {
   let dietaryList = dietaryPreferenceModel.getDietaryPreferenceList(req.session.sessionId);
   let healthConcern = healthConcernModel.getHealthConcernList(req.session.sessionId);
   let username = userModel.getUsernameFromId(req.session.sessionId);
+  let recipeList = recipeModel.getAllRecipesByAccountId(req.session.sessionId);
 
-  res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username });
+  res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username, recipeList: recipeList });
 })
 
 app.get('/editAccount', function (req, res) {
@@ -116,6 +118,16 @@ app.get('/myProfile', function (req, res) {
 app.get('/createRecipe', function (req, res) {
   res.render('createRecipe');
 })
+
+app.get('/recipePage/:id', function (req, res) {
+  const recipe = recipeModel.getRecipeById(req.params.id);
+  const tag = recipeModel.getTagByRecipeId(req.params.id);
+  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
+  let postedBy;
+  if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
+})
+
 
 app.post('/editAccount', function (req, res) {
   let userId = req.session.sessionId; // Get the user ID from the session
@@ -174,6 +186,7 @@ app.post('/editAccount', function (req, res) {
 
 
 app.post('/createRecipe', function (req, res) {
+  const userId = req.session.sessionId;
   const name = req.body.name;
   const description = req.body.description;
   const photo = req.body.photo;
@@ -195,7 +208,7 @@ app.post('/createRecipe', function (req, res) {
       return { ingredient, quantity, unit };
     })
   }
-  const recipeId = recipeModel.addNewRecipe(name, description, photo, preparationTime, cookTime, instructions);
+  const recipeId = recipeModel.addNewRecipe(name, description, photo, preparationTime, cookTime, instructions, userId);
   recipeModel.addNewCategory(recipeId, dishCategory);
   recipeModel.addNewTags(recipeId, tags);
   recipeModel.addNewIngredients(recipeId, combinedIngredients);
