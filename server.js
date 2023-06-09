@@ -26,38 +26,19 @@ let recipeModel = require('./models/recipeModel');
 
 
 // ----------------------------------------------------------------------------------
+
+// Display the home page for unauthenticated users 
 app.get('/', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
-  console.log(req.session.sessionId)
   res.render('index', {recipeList: recipeList});
 })
 
+// Display the sign in form page
 app.get('/signInPage', function (req, res) {
   res.render('signInPage');
 })
 
-app.get('/signUpPage', function (req, res) {
-  res.render('signUpPage');
-})
-
-app.get('/signOut', function (req, res) {
-  req.session = null;
-  res.redirect('/');
-})
-
-app.get('/recipePage/:id', function (req, res) {
-  const recipe = recipeModel.getRecipeById(req.params.id);
-  const tag = recipeModel.getTagByRecipeId(req.params.id);
-  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
-  const category = recipeModel.getCategoryByRecipeId(req.params.id);
-  
-  let postedBy;
-  if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
-  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });
-})
-
-
-
+// Sign in functionality
 app.post('/signInPage', function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
@@ -71,7 +52,18 @@ app.post('/signInPage', function (req, res) {
   res.redirect('/profilePage');
 })
 
+// Sign out functionality 
+app.get('/signOut', function (req, res) {
+  req.session = null;
+  res.redirect('/');
+})
 
+// Display the sign up form page
+app.get('/signUpPage', function (req, res) {
+  res.render('signUpPage');
+})
+
+// Sign up functionality 
 app.post('/signUpPage', function (req, res) {
   let username = req.body.username;
   let email = req.body.email;
@@ -101,17 +93,30 @@ app.post('/signUpPage', function (req, res) {
   }
 })
 
+// Display recipe page of each recipe for unauthenticated users 
+app.get('/recipePage/:id', function (req, res) {
+  const recipe = recipeModel.getRecipeById(req.params.id);
+  const tag = recipeModel.getTagByRecipeId(req.params.id);
+  const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
+  const category = recipeModel.getCategoryByRecipeId(req.params.id);
+  
+  let postedBy;
+  if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });
+})
+
+
 // User needs to be connected for everything beyond this point 
 app.use(isAuthenticated);
 
 
-
+// Display the home page
 app.get('/homePage', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
   res.render('homePage', {recipeList: recipeList});
 })
 
-
+// Display the profile page
 app.get('/profilePage', function (req, res) {
   let dietaryList = dietaryPreferenceModel.getDietaryPreferenceList(req.session.sessionId);
   let healthConcern = healthConcernModel.getHealthConcernList(req.session.sessionId);
@@ -121,19 +126,17 @@ app.get('/profilePage', function (req, res) {
   res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username, recipeList: recipeList });
 })
 
-app.get('/editAccount', function (req, res) {
-  res.render('editAccount');
-})
-
+// My profile button functionality 
 app.get('/myProfile', function (req, res) {
   res.redirect('/profilePage');
 })
 
-app.get('/createRecipe', function (req, res) {
-  res.render('createRecipe');
+// Display the edit account form 
+app.get('/editAccount', function (req, res) {
+  res.render('editAccount');
 })
 
-
+// Edit account button functionality
 app.post('/editAccount', function (req, res) {
   let userId = req.session.sessionId; // Get the user ID from the session
 
@@ -190,6 +193,12 @@ app.post('/editAccount', function (req, res) {
 })
 
 
+// Display create Recipe form
+app.get('/createRecipe', function (req, res) {
+  res.render('createRecipe');
+})
+
+// Create recipe button functionality 
 app.post('/createRecipe', function (req, res) {
   const userId = req.session.sessionId;
   const name = req.body.name;
@@ -228,6 +237,8 @@ app.post('/createRecipe', function (req, res) {
   res.redirect('/createRecipe');
 })
 
+
+// Apply filters button functionality
 app.post('/applyFilters', function (req, res) {
   let category = req.body.dishCategory;
   let tags = req.body['tags[]'];
@@ -256,7 +267,7 @@ app.post('/applyFilters', function (req, res) {
   res.render('homePage', { recipeList: recipeList });
 })
 
-
+// Display recipe page for each page for connected users 
 app.get('/recipePageConnected/:id', isOwner, function (req, res) {
   const recipeId = req.params.id; 
   const loggedInUserId = req.session.sessionId; 
@@ -284,6 +295,7 @@ app.get('/recipePageConnected/:id', isOwner, function (req, res) {
 * This is a middleware function that tests if the user is connected when he wants to
 * access pages that require an authentification.
 */
+
 function isAuthenticated(req, res, next) {
   // checks if a session is open
   if (req.session.sessionId !== undefined) {
@@ -294,6 +306,7 @@ function isAuthenticated(req, res, next) {
   res.status(401).send("Please sign in before you proceed");
 }
 
+// Middleware function to check if the current user is the owner of the recipe they're currently viewing 
 function isOwner(req, res, next) {
   const recipeId = req.params.id; 
   const loggedInUserId = req.session.sessionId; 
