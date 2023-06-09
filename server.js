@@ -49,8 +49,8 @@ app.post('/signInPage', function (req, res) {
   }
 
   req.session.sessionId = verifyId.accountId;
-  res.redirect('/profilePage');
-})
+  res.redirect('/profilePage/' + verifyId.accountId); // Add accountId as a parameter
+});
 
 // Sign out functionality 
 app.get('/signOut', function (req, res) {
@@ -116,20 +116,23 @@ app.get('/homePage', function (req, res) {
   res.render('homePage', {recipeList: recipeList});
 })
 
-// Display the profile page
-app.get('/profilePage', function (req, res) {
-  let dietaryList = dietaryPreferenceModel.getDietaryPreferenceList(req.session.sessionId);
-  let healthConcern = healthConcernModel.getHealthConcernList(req.session.sessionId);
-  let username = userModel.getUsernameFromId(req.session.sessionId);
-  let recipeList = recipeModel.getAllRecipesByAccountId(req.session.sessionId);
+// Display the profile page of any account based on id
+app.get('/profilePage/:accountId', isOwnAccount, function (req, res) {
+  let accountId = req.params.accountId;
+  let dietaryList = dietaryPreferenceModel.getDietaryPreferenceList(accountId);
+  let healthConcern = healthConcernModel.getHealthConcernList(accountId);
+  let username = userModel.getUsernameFromId(accountId);
+  let recipeList = recipeModel.getAllRecipesByAccountId(accountId);
 
-  res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username, recipeList: recipeList });
-})
+  res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username, recipeList: recipeList, isOwnAccount: res.locals.isOwnAccount });
+}); 
 
-// My profile button functionality 
+// My profile button functionality
 app.get('/myProfile', function (req, res) {
-  res.redirect('/profilePage');
-})
+  let loggedInUserId = req.session.sessionId;
+  res.redirect('/profilePage/' + loggedInUserId);
+});
+
 
 // Display the edit account form 
 app.get('/editAccount', function (req, res) {
@@ -323,6 +326,21 @@ function isOwner(req, res, next) {
   next();
 }
 
+// checks if the profile being viewed is the connected user's account or not 
+
+function isOwnAccount(req, res, next) {
+  const profileAccountId = req.params.accountId;
+  const loggedInUserId = req.session.sessionId;
+
+  // Compare the profileAccountId with the logged-in user's accountId
+  if (profileAccountId === loggedInUserId) {
+    res.locals.isOwnAccount = true;
+  } else {
+    res.locals.isOwnAccount = false;
+  }
+
+  next();
+}
 
 
 
