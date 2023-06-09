@@ -1,8 +1,8 @@
 # Culinary-Buddies
 
-# Project Name
-
-A brief description of the project.
+“Culinary Buddies” is a recipe sharing website where users can share their own recipes or save recipes shared by
+other users, categorize their recipes based on budget, culture or medical needs, and even add other users to their
+friends list to be able to chat with them privately.
 
 ## Table of Contents
 
