@@ -284,12 +284,11 @@ app.get('/recipePageConnected/:id', isOwner, function (req, res) {
 
   const tag = recipeModel.getTagByRecipeId(recipeId);
   const ingredients = recipeModel.getIngredientsByRecipeId(recipeId);
+  const category = recipeModel.getCategoryByRecipeId(req.params.id);
+
   let postedBy;
   if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
-  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy });
-});
-
-
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });});
 
 /*
 * This is a middleware function that tests if the user is connected when he wants to
