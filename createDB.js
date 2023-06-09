@@ -1,15 +1,5 @@
 const Sqlite = require('better-sqlite3');
 
-
-/** var createTables = function() {
-
-    db.prepare('DROP TABLE IF EXISTS Users').run();
-    db.prepare('CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT)').run();
-    db.prepare('INSERT INTO USers (name, email, password) VALUES (@name, @email, @password)').run(  {name: "Emory" , email: "Emory@culinaryBuddies", password: "password"});
-}
-
-createTables(); **/
-
 // Open a database connection
 let db = new Sqlite('db.sqlite');
 
@@ -47,6 +37,18 @@ db.prepare(`
     FOREIGN KEY (accountId) REFERENCES Account(accountId)
   )
 `).run();
+
+// Create the Friend table
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS Friend (
+    friendId INTEGER PRIMARY KEY,
+    accountId INTEGER,
+    friendAccountId INTEGER,
+    FOREIGN KEY (accountId) REFERENCES Account(accountId),
+    FOREIGN KEY (friendAccountId) REFERENCES Account(accountId)
+  )
+`).run();
+
 
 // Create the Recipe table
 
@@ -179,89 +181,6 @@ INSERT INTO Ingredient (recipeId, name, quantity, unit)
 VALUES (?, ?, ?, ?)
 `).run(1, 'Spaghetti', 8, "CM" );
 
-/*
-// Insert into Instruction
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Preheat the oven to 375 degrees F (190 degrees C).'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'In a large bowl, cream together butter and sugar until smooth.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Beat in the eggs one at a time, then stir in the vanilla.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Combine flour, baking powder, and salt; gradually stir into the creamed mixture.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Stir in the chocolate chips.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Drop by rounded tablespoonfuls onto ungreased cookie sheets.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Bake for 8 to 10 minutes in the preheated oven.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  1,
-  'Allow cookies to cool on baking sheet for 5 minutes before removing to a wire rack to cool completely.'
-);
-
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  2,
-  'Bring a large pot of salted water to a boil.'
-);
-
-db.prepare(`
-  INSERT INTO Instruction (recipeId, instruction)
-  VALUES (?, ?)
-`).run(
-  2,
-  'Add pasta and cook for 8 to 10 minutes or until al dente; drain.'
-);
-*/
 
 // Close database 
 
