@@ -342,6 +342,20 @@ function isOwnAccount(req, res, next) {
   next();
 }
 
+// Middleware function to check if the displayed account is in the connected user's friend list
+function isFriend(req, res, next) {
+  const displayedAccountId = req.params.accountId;
+  const loggedInUserId = req.session.sessionId;
+
+  if (friendModel.areFriends(loggedInUserId, displayedAccountId)) {
+    res.locals.isFriend = true;
+  } else {
+    res.locals.isFriend = false;
+  }
+
+  next();
+}
+
 
 
 app.listen(5000, () => console.log('listening on http://localhost:5000'));
