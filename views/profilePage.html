@@ -25,13 +25,16 @@
 
         </div>
         <div class="px-3 pb-3">
+          {{#isOwnAccount}}
           <a href="/editAccount" class="btn btn-primary btn-block">Edit Account</a>
+          {{/isOwnAccount}}
 
-          {{#if isFriend}}
+          {{#isFriend}}
           <button class="btn btn-danger btn-block" onclick="removeFriend()">Remove Friend</button>
           {{else}}
           <button class="btn btn-success btn-block" onclick="addFriend()">Add Friend</button>
-          {{/if}}
+          {{/isFriend}}
+
         </div>
       </div>
 
