@@ -148,12 +148,14 @@ app.post('/editAccount', function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
 
+  // Retrieve dietary options from the form data
   let vegan = req.body.vegan;
   let vegetarian = req.body.vegetarian;
   let halal = req.body.halal;
   let kosher = req.body.kosher;
   let otherDietary = req.body.other_dietary;
 
+  // Create an array to store selected dietary options
   let dietaryOptions = [];
   if (vegan != undefined) dietaryOptions.push(vegan);
   if (vegetarian != undefined) dietaryOptions.push(vegetarian);
@@ -161,6 +163,7 @@ app.post('/editAccount', function (req, res) {
   if (kosher != undefined) dietaryOptions.push(kosher);
   if (otherDietary) dietaryOptions.push(otherDietary);
 
+  // Retrieve health concerns from the form data
   let diabetes = req.body.diabetes;
   let cardiovascular_disease = req.body.cardiovascular_disease;
   let celiac_disease = req.body.celiac_disease;
@@ -168,6 +171,7 @@ app.post('/editAccount', function (req, res) {
   let chronic_kidney_disease = req.body.chronic_kidney_disease;
   let otherHealthConcerns = req.body.other_health_concerns;
 
+  // Create an array to store selected health concerns
   let healthConcerns = [];
   if (diabetes != undefined) healthConcerns.push(diabetes);
   if (cardiovascular_disease != undefined) healthConcerns.push(cardiovascular_disease);
@@ -182,7 +186,7 @@ app.post('/editAccount', function (req, res) {
   // Delete Old Dietary Options
   dietaryPreferenceModel.deleteOldDietaryOptions(userId);
 
-  // Delete Old Dietary Options
+  // Delete Old Health Concerns
   healthConcernModel.deleteOldHealthOptions(userId);
 
   // Update Dietary Options
@@ -194,6 +198,7 @@ app.post('/editAccount', function (req, res) {
   req.flash('reg', "Account information was successfully updated !");
   res.redirect('/editAccount');
 })
+
 
 
 // Display create Recipe form
