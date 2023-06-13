@@ -58,7 +58,7 @@ exports.getCategoryByRecipeId = (recipeId) => {
 exports.getAllRecipes = () => {
     let list = db.prepare("SELECT * FROM Recipe").all([]);
     let resultList = [];
-    
+
     for (let x = 0; x < list.length; x++) {
         let account = db.prepare("SELECT username FROM Account WHERE accountId=?").get([list[x].accountId]);
         let category = db.prepare("SELECT categoryName FROM Category WHERE recipeId=?").get([list[x].recipeId]);
@@ -77,9 +77,9 @@ exports.getAllRecipes = () => {
             categoryName: category ? category.categoryName : undefined
         });
     }
-    
+
     return resultList;
-    
+
 }
 
 exports.getRecipeByCategory = (category) => {
@@ -98,9 +98,10 @@ exports.getRecipeByCategoryAndTags = (category, tags) => {
 }
 
 
-
 exports.deleteRecipe = (recipeId) => {
     // Delete the recipe from the Recipe table
+    db.prepare("DELETE FROM Ingredient WHERE recipeId = ?").run([recipeId]);
+    db.prepare("DELETE FROM Category WHERE recipeId = ?").run([recipeId]);
+    db.prepare("DELETE FROM Tag WHERE recipeId = ?").run([recipeId]);
     db.prepare("DELETE FROM Recipe WHERE recipeId = ?").run([recipeId]);
-  }
-  
+}
