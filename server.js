@@ -30,7 +30,7 @@ let recipeModel = require('./models/recipeModel');
 // Display the home page for unauthenticated users 
 app.get('/', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
-  res.render('index', {recipeList: recipeList});
+  res.render('index', { recipeList: recipeList });
 })
 
 // Display the sign in form page
@@ -99,7 +99,7 @@ app.get('/recipePage/:id', function (req, res) {
   const tag = recipeModel.getTagByRecipeId(req.params.id);
   const ingredients = recipeModel.getIngredientsByRecipeId(req.params.id);
   const category = recipeModel.getCategoryByRecipeId(req.params.id);
-  
+
   let postedBy;
   if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
   res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });
@@ -113,7 +113,7 @@ app.use(isAuthenticated);
 // Display the home page
 app.get('/homePage', function (req, res) {
   const recipeList = recipeModel.getAllRecipes();
-  res.render('homePage', {recipeList: recipeList});
+  res.render('homePage', { recipeList: recipeList });
 })
 
 // Display the profile page of any account based on id
@@ -125,7 +125,7 @@ app.get('/profilePage/:accountId', isOwnAccount, function (req, res) {
   let recipeList = recipeModel.getAllRecipesByAccountId(accountId);
 
   res.render('profilePage', { dietary: dietaryList, health: healthConcern, username: username.username, recipeList: recipeList, isOwnAccount: res.locals.isOwnAccount });
-}); 
+});
 
 // My profile button functionality
 app.get('/myProfile', function (req, res) {
@@ -148,14 +148,12 @@ app.post('/editAccount', function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
 
-  // Retrieve dietary options from the form data
   let vegan = req.body.vegan;
   let vegetarian = req.body.vegetarian;
   let halal = req.body.halal;
   let kosher = req.body.kosher;
   let otherDietary = req.body.other_dietary;
 
-  // Create an array to store selected dietary options
   let dietaryOptions = [];
   if (vegan != undefined) dietaryOptions.push(vegan);
   if (vegetarian != undefined) dietaryOptions.push(vegetarian);
@@ -163,7 +161,6 @@ app.post('/editAccount', function (req, res) {
   if (kosher != undefined) dietaryOptions.push(kosher);
   if (otherDietary) dietaryOptions.push(otherDietary);
 
-  // Retrieve health concerns from the form data
   let diabetes = req.body.diabetes;
   let cardiovascular_disease = req.body.cardiovascular_disease;
   let celiac_disease = req.body.celiac_disease;
@@ -171,7 +168,6 @@ app.post('/editAccount', function (req, res) {
   let chronic_kidney_disease = req.body.chronic_kidney_disease;
   let otherHealthConcerns = req.body.other_health_concerns;
 
-  // Create an array to store selected health concerns
   let healthConcerns = [];
   if (diabetes != undefined) healthConcerns.push(diabetes);
   if (cardiovascular_disease != undefined) healthConcerns.push(cardiovascular_disease);
@@ -186,7 +182,7 @@ app.post('/editAccount', function (req, res) {
   // Delete Old Dietary Options
   dietaryPreferenceModel.deleteOldDietaryOptions(userId);
 
-  // Delete Old Health Concerns
+  // Delete Old Dietary Options
   healthConcernModel.deleteOldHealthOptions(userId);
 
   // Update Dietary Options
@@ -198,7 +194,6 @@ app.post('/editAccount', function (req, res) {
   req.flash('reg', "Account information was successfully updated !");
   res.redirect('/editAccount');
 })
-
 
 
 // Display create Recipe form
@@ -242,7 +237,7 @@ app.post('/createRecipe', function (req, res) {
   recipeModel.addNewIngredients(recipeId, combinedIngredients);
 
   req.flash('reg', "Recipe was successfully created !");
-  res.redirect('/createRecipe');
+  res.redirect('/profilePage/' + req.session.sessionId);
 })
 
 
@@ -275,10 +270,16 @@ app.post('/applyFilters', function (req, res) {
   res.render('homePage', { recipeList: recipeList });
 })
 
+app.post('/deleteRecipe/:id', function (req, res) {
+  recipeModel.deleteRecipe(req.params.id)
+  req.flash('reg', "Recipe was successfully Removed !");
+  res.redirect('/profilePage/' + req.session.sessionId);
+})
+
 // Display recipe page for each page for connected users 
 app.get('/recipePageConnected/:id', isOwner, function (req, res) {
-  const recipeId = req.params.id; 
-  const loggedInUserId = req.session.sessionId; 
+  const recipeId = req.params.id;
+  const loggedInUserId = req.session.sessionId;
 
   // Retrieve the recipe
   const recipe = recipeModel.getRecipeById(recipeId);
@@ -296,7 +297,10 @@ app.get('/recipePageConnected/:id', isOwner, function (req, res) {
 
   let postedBy;
   if (recipe) postedBy = userModel.getUsernameFromId(recipe.accountId);
-  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });});
+  res.render('recipePage', { recipe: recipe, tag: tag, ingredients: ingredients, postedBy: postedBy, category: category });
+});
+
+
 
 /*
 * This is a middleware function that tests if the user is connected when he wants to
@@ -315,8 +319,8 @@ function isAuthenticated(req, res, next) {
 
 // Middleware function to check if the current user is the owner of the recipe they're currently viewing 
 function isOwner(req, res, next) {
-  const recipeId = req.params.id; 
-  const loggedInUserId = req.session.sessionId; 
+  const recipeId = req.params.id;
+  const loggedInUserId = req.session.sessionId;
 
   // Retrieve the recipe
   const recipe = recipeModel.getRecipeById(recipeId);
