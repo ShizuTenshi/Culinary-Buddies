@@ -27,9 +27,8 @@
 
         </div>
         <div class="px-3 pb-3">
-          <!-- {{#isOwnAccount}} -->
+          <!-- this should only be visible if it's user's own account-->
           <a href="/editAccount" class="btn btn-primary btn-block">Edit Account</a>
-          <!-- {{/isOwnAccount}} -->
 
           {{#isFriend}}
           <button class="btn btn-danger btn-block" onclick="removeFriend()">Remove Friend</button>
