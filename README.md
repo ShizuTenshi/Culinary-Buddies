@@ -4,6 +4,8 @@
 other users, categorize their recipes based on budget, culture or medical needs, and even add other users to their
 friends list to be able to chat with them privately.
 
+## Disclaimer: development in progress
+
 ## Table of Contents
 
 - [Models](#models)
